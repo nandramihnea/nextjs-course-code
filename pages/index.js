@@ -1,62 +1,51 @@
+import Head from 'next/head';
+import { MongoClient } from "mongodb";
+
 import MeetupList from "../components/meetups/MeetupList";
 
-const DUMMY_MEETUPS = [
-  {
-    id: "m1",
-    title: "Meetup 1",
-    image: "https://source.unsplash.com/random/landscape",
-    address: "123 Main St",
-    description:
-      "This is a description of the meetup that will be displayed in the list This is a description of the meetup that will be displayed in the lis This is a description of the meetup that will be displayed in the lis This is a description of the meetup that will be displayed in the lis This is a description of the meetup that will be displayed in the lis",
-  },
-  {
-    id: "m2",
-    title: "Meetup 2",
-    image: "https://source.unsplash.com/random/landscape",
-    address: "123 Main St",
-    description: "This is a description",
-  },
-  {
-    id: "m3",
-    title: "Meetup 3",
-    image: "https://source.unsplash.com/random/landscape",
-    address: "123 Main St",
-    description: "This is a description",
-  },
-  {
-    id: "m4",
-    title: "Meetup 4",
-    image: "https://source.unsplash.com/random/landscape",
-    address: "123 Main St",
-    description: "This is a description",
-  },
-  {
-    id: "m5",
-    title: "Meetup 5",
-    image: "https://source.unsplash.com/random/landscape",
-    address: "123 Main St",
-    description:
-      "This is a description This is a description This is a description This is a description This is a description This is a description This is a description",
-  },
-];
-
 function HomePage(props) {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <>
+      <Head>
+        <title>Meetups</title>
+        <meta
+          name="description"
+          content="A simple meetup app to share your meetups with other users" />
+      </Head>
+      <MeetupList meetups={props.meetups} />;
+    </>
+  );
 }
 
-// export async function getServerSideProps(context) {
-//   return {
-//     props: {
-//       meetups: DUMMY_MEETUPS,
-//     },
-//   };
-// }
-
 export async function getStaticProps() {
+  //fetch data from API
+  let meetups;
+
+  const uri =
+    "mongodb+srv://mememihnea:T1Su1E7u6uUE8Cm4@first-cluster.mblrxss.mongodb.net/?retryWrites=true&w=majority";
+
+  const client = new MongoClient(uri);
+
+  await client.connect();
+  const db = client.db("meetups");
+  const collection = db.collection("meetups");
+
+  meetups = await collection.find({}).toArray();
+  await client.close();
+
+  const parsedData = meetups.map((meetup) => ({
+    title: meetup.title,
+    address: meetup.address,
+    description: meetup.description,
+    image: meetup.image,
+    id: meetup._id.toString(),
+  }));
+
   return {
     props: {
-      meetups: DUMMY_MEETUPS,
+      meetups: parsedData,
     },
+    revalidate: 1,
   };
 }
 

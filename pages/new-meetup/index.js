@@ -23,7 +23,7 @@ export default function NewMeetupPage() {
         <title>New Meetup page</title>
         <meta
           name="description"
-          content="A simple meetup app to share your meetups with other users"
+          content="for the deploy etups with other users"
         />
       </Head>
       <NewMeetupForm onAddMeetup={addMeetupHandler} />

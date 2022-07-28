@@ -7,7 +7,7 @@ function HomePage(props) {
   return (
     <>
       <Head>
-        <title>Meetups</title>
+        <title>Meetup DADADADAs</title>
         <meta
           name="description"
           content="A simple meetup app to share your meetups with other users" />
